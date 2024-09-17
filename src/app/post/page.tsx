@@ -1,7 +1,6 @@
 "use client";
 import Header from "../components/Header";
 import { useState } from "react";
-import { supabase } from "../components/supabaseClient";
 
 const Post = () => {
   const [category, setCategory] = useState("selectCategory");
@@ -44,16 +43,22 @@ const Post = () => {
     };
 
     try {
-      const { error } = await supabase.from("job").insert(newJob);
-      if (error) {
-        console.log(error);
+      const response = await fetch("/api/data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newJob),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      alert("投稿に成功しました");
+      alert("求人を投稿しました");
       setCategory("selectCategory");
       setSalary(0);
       setTitle("");
     } catch (error) {
-      console.log(error);
+      console.error("Error creating job:", error);
     }
   };
 

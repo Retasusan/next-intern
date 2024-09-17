@@ -1,5 +1,3 @@
-import React from "react";
-import { supabase } from "./supabaseClient";
 import { useState, useEffect } from "react";
 
 type Props = {
@@ -18,34 +16,17 @@ export default function ShowData({ selectedCategories, salary }: Props) {
   const [posts, setPosts] = useState<Job[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { data, error } = await supabase.from("job").select("*");
-      if (error) {
-        console.error("Error fetching users:", error);
-      } else {
-        setPosts(data);
-        console.log(data);
-      }
-    };
-
-    fetchData();
+    fetch("/api/data", {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        setPosts(json);
+      })
+      .catch((error: Error) => {
+        console.error("Error:", error);
+      });
   }, []);
-
-  //   useEffect(() => {
-  //     fetch(
-  //       "https://obscure-forest-13675-7dc690c010ac.herokuapp.com/api/v1/posts",
-  //       {
-  //         method: "GET",
-  //       }
-  //     )
-  //       .then((res) => res.json())
-  //       .then((json) => {
-  //         setPosts(json);
-  //       })
-  //       .catch((error: any) => {
-  //         console.error("Error:", error);
-  //       });
-  //   }, []);
 
   type Post = {
     id: number;
